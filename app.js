@@ -1,34 +1,20 @@
-const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const adminRouter = require('./routes/admin.js');
+const shopRouter = require('./routes/shop.js');
 
-const server = http.createServer((req, res) => {
-    // Set the content type to HTML
-    const method = req.method;
-    const url = req.url;
+const app = express();
 
-    if (method === "POST" && url === "/message"){
-        const body = [];
+app.use(bodyParser.urlencoded({extended: false}));
 
-        req.on('data' , (chunck) => {
-            body.push(chunck);
-        });
-        
-        req.on('end' , () => {
-            let message = Buffer.concat(body).toString(); 
-            message = message.split('=');
-            message = message[1];
-            fs.writeFileSync('./message.txt' , message);
-            res.write('<html> <header> <title>Test NodeJS</title> </header> <body> <h1>Thank u for submiting</h1> </body> </html>');
-            return res.end();
-        });  
+app.use(adminRouter);
+app.use(shopRouter);
 
-    }
-
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<html> <header> <title>Test NodeJS</title> </header> <body> <form method="POST" action="/message"> <input type="text" name="message"></input> <button type="submit">SUBMIT</button> </form> </body> </html>');
-    return res.end();
+//Dummy page handle//
+app.use((req , res , next) => {
+    res.status(404).send('<h1>ERROR : 404 | Page not found</h1>');
 });
-server.listen(3000, () => {
-    console.log('Server running at http://localhost:3000');
-});
+
+app.listen(3000);
