@@ -1,0 +1,12 @@
+extends layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet" href="/css/main.css")
+
+block content 
+  main
+      form.product-form.row(action="/admin/add-product" method="POST")
+        .form-control
+          label(for="title") Title
+          input.form-control(type="text" name="title" id="title")
+        button.btn.btn-primary.col-5(type="submit") Add Product
